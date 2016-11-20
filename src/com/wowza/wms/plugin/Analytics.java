@@ -1,11 +1,13 @@
+/*
+ * This code and all components (c) Copyright 2006 - 2016, Wowza Media Systems, LLC.  All rights reserved.
+ * This code is licensed pursuant to the Wowza Public License version 1.0, available at www.wowza.com/legal.
+ */
 package com.wowza.wms.plugin;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -22,7 +24,6 @@ import com.wowza.wms.logging.WMSLoggerFactory;
 import com.wowza.wms.mediacaster.IMediaCaster;
 import com.wowza.wms.mediacaster.MediaCasterNotifyBase;
 import com.wowza.wms.module.ModuleBase;
-import com.wowza.wms.plugin.GoogleAnalytics;
 import com.wowza.wms.rtp.model.RTPSession;
 import com.wowza.wms.rtp.model.RTPStream;
 import com.wowza.wms.rtp.model.RTSPActionNotifyBase;
@@ -269,22 +270,22 @@ public class Analytics extends ModuleBase
 		@Override
 		public void run()
 		{
-			if (!StringUtils.isEmpty(this.url))
+			if (!StringUtils.isEmpty(url))
 			{
 				if (moduleDebug)
-					this.requestLogger.info(MODULE_NAME + " URL is " + this.url + " Cookie is " + this.cookie + " Referer is " + this.referer);
+					requestLogger.info(MODULE_NAME + " URL is " + url + " Cookie is " + cookie + " Referer is " + referer);
 
 				int count = 0;
 				while (true)
 				{
 
 					if (moduleDebug)
-						this.requestLogger.info(MODULE_NAME + " This would fire url of " + this.url + " with cookie of " + this.cookie + " count is " + count);
-					boolean result = httpEvent(this.url, this.referer, this.cookie, 2000);
+						requestLogger.info(MODULE_NAME + " This would fire url of " + url + " with cookie of " + cookie + " count is " + count);
+					boolean result = httpEvent(url, referer, cookie, 2000);
 
 					if (result != false)
 					{
-						this.requestLogger.info(MODULE_NAME + " URL " + this.url + " Success");
+						requestLogger.info(MODULE_NAME + " URL " + url + " Success");
 						break;
 					}
 					else
@@ -292,7 +293,7 @@ public class Analytics extends ModuleBase
 						count++;
 						if (count >= wowzalyticsHTTPRetries)
 						{
-							this.requestLogger.info(MODULE_NAME + " URL " + this.url + " has failed " + count + " times.");
+							requestLogger.info(MODULE_NAME + " URL " + url + " has failed " + count + " times.");
 							break;
 						}
 
@@ -300,12 +301,12 @@ public class Analytics extends ModuleBase
 						{
 
 							if (moduleDebug)
-								this.requestLogger.info(MODULE_NAME + " Sleep for " + wowzalyticsDelayForFailedRequests + " milliseconds");
+								requestLogger.info(MODULE_NAME + " Sleep for " + wowzalyticsDelayForFailedRequests + " milliseconds");
 							Thread.sleep(wowzalyticsDelayForFailedRequests);
 						}
 						catch (InterruptedException e)
 						{
-							this.requestLogger.error(MODULE_NAME + ".RequestManager.run() InterruptedException", e);
+							requestLogger.error(MODULE_NAME + ".RequestManager.run() InterruptedException", e);
 						}
 					}
 				}
@@ -320,10 +321,10 @@ public class Analytics extends ModuleBase
 			Reader in = null;
 			try
 			{
-				URL myUrl = new URL(url); 
-				
+				URL myUrl = new URL(url);
+
 				URLConnection conn = myUrl.openConnection();
-				
+
 				conn.setConnectTimeout(timeout);
 				conn.setReadTimeout(timeout);
 
@@ -346,7 +347,7 @@ public class Analytics extends ModuleBase
 			}
 			catch (Exception e)
 			{
-				this.requestLogger.error(MODULE_NAME + ".RequestManager.httpEvent() Exception", e);
+				requestLogger.error(MODULE_NAME + ".RequestManager.httpEvent() Exception", e);
 				return false;
 			}
 			finally
@@ -428,34 +429,35 @@ public class Analytics extends ModuleBase
 	private boolean getPropertyValueBoolean(String key, boolean defaultValue)
 	{
 		boolean value = serverProps.getPropertyBoolean(key, defaultValue);
-		value = this.appInstance.getProperties().getPropertyBoolean(key, value);
+		value = appInstance.getProperties().getPropertyBoolean(key, value);
 		return value;
 	}
 
 	private String getPropertyValueStr(String key)
 	{
 		String value = serverProps.getPropertyStr(key);
-		value = this.appInstance.getProperties().getPropertyStr(key, value);
+		value = appInstance.getProperties().getPropertyStr(key, value);
 		return value;
 	}
 
 	public void onAppStart(IApplicationInstance appInstance)
 	{
 		this.appInstance = appInstance;
-		this.logger = WMSLoggerFactory.getLoggerObj(appInstance);
-		this.moduleDebug = getPropertyValueBoolean(PROP_NAME_PREFIX + "Debug", false);
+		logger = WMSLoggerFactory.getLoggerObj(appInstance);
+		moduleDebug = getPropertyValueBoolean(PROP_NAME_PREFIX + "Debug", false);
 
-		if (this.logger.isDebugEnabled())
-			this.moduleDebug = true;
+		if (logger.isDebugEnabled())
+			moduleDebug = true;
 
-		if (this.moduleDebug)
-			this.logger.info(MODULE_NAME + " DEBUG mode is ON");
+		if (moduleDebug)
+			logger.info(MODULE_NAME + " DEBUG mode is ON");
 		else
-			this.logger.info(MODULE_NAME + " DEBUG mode is OFF");
+			logger.info(MODULE_NAME + " DEBUG mode is OFF");
 
-		this.statsNotificationUrls = getPropertyValueStr(PROP_NAME_PREFIX + "StatsNotificationUrls");
-		this.googleAnalytics = new GoogleAnalytics(appInstance.getApplication().getName()+"/"+appInstance.getName(), getPropertyValueStr(PROP_NAME_PREFIX + "GACode"), getPropertyValueStr(PROP_NAME_PREFIX + "GADomain"), getPropertyValueStr(PROP_NAME_PREFIX + "GAHost"), getPropertyValueStr(PROP_NAME_PREFIX + "GAPrefix"));
-		appInstance.addMediaCasterListener(this.mediaCasterListener);
+		statsNotificationUrls = getPropertyValueStr(PROP_NAME_PREFIX + "StatsNotificationUrls");
+		googleAnalytics = new GoogleAnalytics(appInstance.getApplication().getName() + "/" + appInstance.getName(), getPropertyValueStr(PROP_NAME_PREFIX + "GACode"), getPropertyValueStr(PROP_NAME_PREFIX + "GADomain"), getPropertyValueStr(PROP_NAME_PREFIX + "GAHost"),
+				getPropertyValueStr(PROP_NAME_PREFIX + "GAPrefix"));
+		appInstance.addMediaCasterListener(mediaCasterListener);
 	}
 
 	/*
@@ -464,27 +466,27 @@ public class Analytics extends ModuleBase
 	 */
 	public void onAppStop(IApplicationInstance appInstance)
 	{
-		this.googleAnalytics = null;
+		googleAnalytics = null;
 	}
 
 	public void onStreamCreate(IMediaStream stream)
 	{
-		stream.addClientListener(this.streamListener);
+		stream.addClientListener(streamListener);
 	}
 
 	public void onStreamDestroy(IMediaStream stream)
 	{
-		stream.removeClientListener(this.streamListener);
+		stream.removeClientListener(streamListener);
 	}
 
 	public void onRTPSessionCreate(RTPSession rtpSession)
 	{
-		rtpSession.addActionListener(this.rtspListener);
+		rtpSession.addActionListener(rtspListener);
 	}
 
 	public void onRTPSessionDestroy(RTPSession rtpSession)
 	{
-		rtpSession.removeActionListener(this.rtspListener);
+		rtpSession.removeActionListener(rtspListener);
 	}
 
 	public String getHTTPProtocol(IHTTPStreamerSession session)
@@ -511,8 +513,8 @@ public class Analytics extends ModuleBase
 	public void onHTTPSessionCreate(IHTTPStreamerSession session)
 	{
 		String responseHeader = session.getHTTPHeader("x-playback-session-id");
-		if (this.moduleDebug)
-			this.logger.info(MODULE_NAME + " onHTTPSessionCreate::stream.getName()::" + session.getStreamName() + ":" + responseHeader);
+		if (moduleDebug)
+			logger.info(MODULE_NAME + " onHTTPSessionCreate::stream.getName()::" + session.getStreamName() + ":" + responseHeader);
 
 		String connectionProtocol = getHTTPProtocol(session);
 
@@ -535,12 +537,12 @@ public class Analytics extends ModuleBase
 	private String sendStatsToGoogle(String sessionId, String cookieStore, String streamName, String referrerStr, String ipAddress, String eventName, String eventValue)
 	{
 
-		if (this.googleAnalytics != null)
+		if (googleAnalytics != null)
 		{
-			String cookieID = this.googleAnalytics.makeVisitorID(sessionId, cookieStore);
-			String referer = this.googleAnalytics.makeReferrer(referrerStr);
-			String url = this.googleAnalytics.makeGARequest(streamName, referer, ipAddress, cookieID, eventName, eventValue,sessionId);
-			eventRequestThreadPool.submit(new Request(this.logger, url, referer, this.googleAnalytics.makeGoogleCookie(cookieID)));
+			String cookieID = googleAnalytics.makeVisitorID(sessionId, cookieStore);
+			String referer = googleAnalytics.makeReferrer(referrerStr);
+			String url = googleAnalytics.makeGARequest(streamName, referer, ipAddress, cookieID, eventName, eventValue, sessionId);
+			eventRequestThreadPool.submit(new Request(logger, url, referer, googleAnalytics.makeGoogleCookie(cookieID)));
 			return cookieID;
 		}
 		return null;
@@ -548,13 +550,13 @@ public class Analytics extends ModuleBase
 
 	private void sendStatsToRemoteServer(String referrer, IApplicationInstance appInstance)
 	{
-		if (!StringUtils.isEmpty(this.statsNotificationUrls))
+		if (!StringUtils.isEmpty(statsNotificationUrls))
 		{
-			String[] urlArr = this.statsNotificationUrls.split(",");
+			String[] urlArr = statsNotificationUrls.split(",");
 			if (urlArr.length > 0)
 			{
 				for (int i = 0; i < urlArr.length; i++)
-					eventRequestThreadPool.submit(new Request(this.logger, urlArr[i].trim() + "?streamType=" + referrer, referrer, ""));
+					eventRequestThreadPool.submit(new Request(logger, urlArr[i].trim() + "?streamType=" + referrer, referrer, ""));
 			}
 		}
 	}

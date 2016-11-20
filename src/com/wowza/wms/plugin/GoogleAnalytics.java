@@ -1,5 +1,6 @@
-/**
- * Wowza server software and all components Copyright 2006 - 2015, Wowza Media Systems, LLC, licensed pursuant to the Wowza Media Software End User License Agreement.
+/*
+ * This code and all components (c) Copyright 2006 - 2016, Wowza Media Systems, LLC.  All rights reserved.
+ * This code is licensed pursuant to the Wowza Public License version 1.0, available at www.wowza.com/legal.
  */
 package com.wowza.wms.plugin;
 
@@ -26,43 +27,43 @@ public class GoogleAnalytics
 
 	public GoogleAnalytics(String appname, String urchin, String domain, String host, String prefix)
 	{
-		this.appName = appname;
-		this.urchinCode = urchin;
-		this.gaDomain = domain;
-		this.gaHost = host;
-		this.GAPrefix = prefix;
+		appName = appname;
+		urchinCode = urchin;
+		gaDomain = domain;
+		gaHost = host;
+		GAPrefix = prefix;
 	}
-	
+
 	public String makeReferrer(String referrer)
 	{
 		String localReferrer = "";
 
 		if (referrer.length() > 0)
-			localReferrer = "%2F" + this.GAPrefix + "%2F" + this.appName + "%2F" + referrer;
+			localReferrer = "%2F" + GAPrefix + "%2F" + appName + "%2F" + referrer;
 		return localReferrer;
 	}
 
 	public String makeVisitorID(String sessionID, String previousCookie)
 	{
-		return getVisitorId(sessionID, this.urchinCode, "WowzaStreamingEngine", previousCookie);
+		return getVisitorId(sessionID, urchinCode, "WowzaStreamingEngine", previousCookie);
 	}
 
 	public String makeGoogleCookie(String visitorID)
 	{
 		long nowTime = new Date().getTime();
 		nowTime = nowTime + 86400;
-		String expire = this.dateFormat.format(nowTime);
+		String expire = dateFormat.format(nowTime);
 		return "__utmmobile=" + visitorID + "; Expires=" + expire + "; Path=/";
 	}
 
 	public String makeGARequest(String stream, String referrer, String ipaddress, String visitorID, String eventName, String eventType, String sessionID)
 	{
-		this.myTime = System.currentTimeMillis() / 1000;
-		String utmcc = "__utma%3D"+sessionID+"."+sessionID+"."+sessionID+"."+sessionID+"."+sessionID+"."+sessionID+"%3B";
-		
-		String eventCaller = "http://www.google-analytics.com/__utm.gif?utmdt=" + stream + "&utmt=event&utme=5(" + eventName + "*" + eventType + "*" + stream + ")&utmwv=4.4sh" + "&utmn=" + generateUTMN() + "&utmhn=" + this.gaDomain + "&utmr=" + referrer + "&utmp=%2F" + this.GAPrefix + "%2F"
-				+ this.appName + "%2F" + stream + "&utmac=" + this.urchinCode + "&utmcc=" + utmcc + "&utmvid=" + visitorID + "&utmip=" + returnGAIP(ipaddress)+ "&uip=" + returnGAIP(ipaddress);
-		
+		myTime = System.currentTimeMillis() / 1000;
+		String utmcc = "__utma%3D" + sessionID + "." + sessionID + "." + sessionID + "." + sessionID + "." + sessionID + "." + sessionID + "%3B";
+
+		String eventCaller = "http://www.google-analytics.com/__utm.gif?utmdt=" + stream + "&utmt=event&utme=5(" + eventName + "*" + eventType + "*" + stream + ")&utmwv=4.4sh" + "&utmn=" + generateUTMN() + "&utmhn=" + gaDomain + "&utmr=" + referrer + "&utmp=%2F" + GAPrefix + "%2F" + appName + "%2F"
+				+ stream + "&utmac=" + urchinCode + "&utmcc=" + utmcc + "&utmvid=" + visitorID + "&utmip=" + returnGAIP(ipaddress) + "&uip=" + returnGAIP(ipaddress);
+
 		return eventCaller;
 	}
 
@@ -85,14 +86,14 @@ public class GoogleAnalytics
 
 	public String generateSmallRandom()
 	{
-		return String.valueOf(this.ranPointer.nextInt(1000));
+		return String.valueOf(ranPointer.nextInt(1000));
 	}
 
 	public String generateRanPointer()
 	{
 		int baseNumber = 1000000000;
 		int range = 1147483647;
-		int ran = this.ranPointer.nextInt(range);
+		int ran = ranPointer.nextInt(range);
 		ran = ran + baseNumber;
 		return String.valueOf(ran);
 	}
@@ -110,7 +111,7 @@ public class GoogleAnalytics
 	{
 		int baseNumber = 1000000000;
 		double range = 8999999999D;
-		double gutmn = this.UTMN.nextDouble();
+		double gutmn = UTMN.nextDouble();
 		gutmn = gutmn * range;
 		gutmn = gutmn + baseNumber;
 		String output = String.format("%20.0f", gutmn);
