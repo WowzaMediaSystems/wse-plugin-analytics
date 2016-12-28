@@ -1,11 +1,13 @@
-# Wowza Google Analytics 
-The **Analytics** module for [Wowza Streaming Engine™ media server software](https://www.wowza.com/products/streaming-engine) allows you to track your connections to Google Analytics service.
+# Wowza Google Analytics
+The **Analytics** module for Wowza Streaming Engine™ [media server software](https://www.wowza.com/products/streaming-engine) enables you to track your streaming connections in the Google Analytics service.
 
 ## Prerequisites
-Wowza Streaming Engine 4.0.0 or later is required.
+Wowza Streaming Engine™ 4.0.0 or later is required.
+
+You'll need your Google tracking ID for the domain (website property) being tracked in Google Analytics. The tracking ID is a string like **UA-000000-01**.
 
 ## Usage
-Specify your google tracking code UA-xxxxxx code and Wowza will report all the play/stop/publish/unpublish events along with the ip location and protocol in use.
+Specify your Google tracking IDe and Wowza Streaming Engine will report all play/stop/publish/unpublish events along with the client IP location and protocol in use.
 
 ## More resources
 [Wowza Streaming Engine Server-Side API Reference](https://www.wowza.com/resources/WowzaStreamingEngine_ServerSideAPI.pdf)
@@ -14,7 +16,7 @@ Specify your google tracking code UA-xxxxxx code and Wowza will report all the p
 
 Wowza Media Systems™ provides developers with a platform to create streaming applications and solutions. See [Wowza Developer Tools](https://www.wowza.com/resources/developers) to learn more about our APIs and SDK.
 
-To use the compiled version of this module, see [How to send connection and stream statistics to Google Analytics](https://www.wowza.com/forums/content.php?672-How-to-send-connection-and-stream-statistics-to-Google-Analytics-(ModuleAnalytics)).
+To use the compiled version of this module, see [How to send connection and stream statistics to Google Analytics (Analytics)](https://www.wowza.com/forums/content.php?672-How-to-send-connection-and-stream-statistics-to-Google-Analytics-%28Analytics&29).
 
 ## Contact
 [Wowza Media Systems, LLC](https://www.wowza.com/contact)
