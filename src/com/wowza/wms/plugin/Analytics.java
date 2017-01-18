@@ -8,8 +8,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -537,13 +539,20 @@ public class Analytics extends ModuleBase
 	private String sendStatsToGoogle(String sessionId, String cookieStore, String streamName, String referrerStr, String ipAddress, String eventName, String eventValue)
 	{
 
-		if (googleAnalytics != null)
+		try
 		{
-			String cookieID = googleAnalytics.makeVisitorID(sessionId, cookieStore);
-			String referer = googleAnalytics.makeReferrer(referrerStr);
-			String url = googleAnalytics.makeGARequest(streamName, referer, ipAddress, cookieID, eventName, eventValue, sessionId);
-			eventRequestThreadPool.submit(new Request(logger, url, referer, googleAnalytics.makeGoogleCookie(cookieID)));
-			return cookieID;
+			if (googleAnalytics != null)
+			{
+				String cookieID = googleAnalytics.makeVisitorID(sessionId, cookieStore);
+				String referer = googleAnalytics.makeReferrer(URLEncoder.encode(referrerStr, "UTF-8"));
+				String url = googleAnalytics.makeGARequest(URLEncoder.encode(streamName, "UTF-8"), referer, ipAddress, cookieID, URLEncoder.encode(eventName, "UTF-8"), URLEncoder.encode(eventValue, "UTF-8"), URLEncoder.encode(sessionId, "UTF-8"));
+				eventRequestThreadPool.submit(new Request(logger, url, referer, googleAnalytics.makeGoogleCookie(cookieID)));
+				return cookieID;
+			}
+		}
+		catch (Exception e)
+		{
+			logger.error(MODULE_NAME + ".sendStatsToGoogle exception:" + e.getMessage(), e);
 		}
 		return null;
 	}
