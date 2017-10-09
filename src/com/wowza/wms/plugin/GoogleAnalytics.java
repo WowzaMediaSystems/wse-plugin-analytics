@@ -61,7 +61,7 @@ public class GoogleAnalytics
 		myTime = System.currentTimeMillis() / 1000;
 		String utmcc = "__utma%3D" + sessionID + "." + sessionID + "." + sessionID + "." + sessionID + "." + sessionID + "." + sessionID + "%3B";
 
-		String eventCaller = "http://www.google-analytics.com/__utm.gif?utmdt=" + stream + "&utmt=event&utme=5(" + eventName + "*" + eventType + "*" + stream + ")&utmwv=4.4sh" + "&utmn=" + generateUTMN() + "&utmhn=" + gaDomain + "&utmr=" + referrer + "&utmp=%2F" + GAPrefix + "%2F" + appName + "%2F"
+		String eventCaller = "https://www.google-analytics.com/__utm.gif?utmdt=" + stream + "&utmt=event&utme=5(" + eventName + "*" + eventType + "*" + stream + ")&utmwv=4.4sh" + "&utmn=" + generateUTMN() + "&utmhn=" + gaDomain + "&utmr=" + referrer + "&utmp=%2F" + GAPrefix + "%2F" + appName + "%2F"
 				+ stream + "&utmac=" + urchinCode + "&utmcc=" + utmcc + "&utmvid=" + visitorID + "&utmip=" + returnGAIP(ipaddress) + "&uip=" + returnGAIP(ipaddress);
 
 		return eventCaller;
