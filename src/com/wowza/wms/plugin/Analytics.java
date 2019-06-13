@@ -442,7 +442,7 @@ public class Analytics extends ModuleBase
 		return value;
 	}
 
-	public void onAppStart(IApplicationInstance appInstance)
+	public void onAppCreate(IApplicationInstance appInstance)
 	{
 		this.appInstance = appInstance;
 		logger = WMSLoggerFactory.getLoggerObj(appInstance);
