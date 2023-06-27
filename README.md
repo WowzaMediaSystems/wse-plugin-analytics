@@ -12,6 +12,12 @@ Specify your Google tracking ID and Wowza Streaming Engine will report all _vide
 
 The module is also able to send tracking events via a _Server Side Tag Manager_ instance for further processing before forwarding to GA4.
 
+## Build instructions
+* Clone repo to local filesystem.
+* Update `wseLibDir` variable in `gradle.properties` to point to local _Wowza Streaming Engine_ `lib` folder.
+* Run `gradle generateJava` command to generate the `BuildProperties.java` file.  This task will automatically run before each compile to regenerate the file.
+* Run `gradle build` to build the jar file.
+
 ## More resources
 To use the compiled version of this module, see [Send connection and stream statistics to Google Analytics with a Wowza Streaming Engine Java module](https://www.wowza.com/docs/how-to-send-connection-and-stream-statistics-to-google-analytics-analytics).
 
