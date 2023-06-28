@@ -42,7 +42,3 @@ sourceSets.main.java.srcDir generateJava.outputDir
 tasks.withType(Jar).configureEach {
     archiveBaseName = "wse-plugin-${projectName}"
 }
-
-tasks.register('zip', Zip) {
-    from jar
-}
