@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs "$wseLibDir"
+    }
+}
+
+dependencies {
+    compileOnly name: 'wms-server'
+    compileOnly name: 'wms-webrtc'
+    compileOnly 'org.apache.logging.log4j:log4j-core:2.17.2'
+    compileOnly 'org.apache.logging.log4j:log4j-api:2.17.2'
+}
+
+tasks.register("generateJava") {
+    ext.outputDir = "$buildDir/generated/java"
+    inputs.property('version', project.version)
+    outputs.dir outputDir
+    doLast {
+        mkdir "$outputDir/com/wowza/wms/plugin/${projectName}"
+        file("$outputDir/com/wowza/wms/plugin/analytics/BuildProperties.java").text =
+                """|package com.wowza.wms.plugin.${projectName};
+                   |public class BuildProperties {
+                   |    public static String getVersion() { return "${project.version}"; }
+                   |}""".stripMargin()
+    }
+}
+
+compileJava.dependsOn generateJava
+sourceSets.main.java.srcDir generateJava.outputDir
+
+tasks.withType(Jar).configureEach {
+    archiveBaseName = "wse-plugin-${projectName}"
+}
