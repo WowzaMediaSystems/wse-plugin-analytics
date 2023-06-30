@@ -13,6 +13,7 @@ import com.wowza.wms.medialist.*;
 import com.wowza.wms.module.ModuleBase;
 import com.wowza.wms.plugin.analytics.model.*;
 import com.wowza.wms.rtp.model.*;
+import com.wowza.wms.server.Server;
 import com.wowza.wms.stream.*;
 import com.wowza.wms.util.*;
 import com.wowza.wms.vhost.IVHost;
@@ -25,7 +26,6 @@ import java.util.*;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 import java.util.regex.*;
 
 public class ModuleGA4 extends ModuleBase
@@ -54,22 +54,22 @@ public class ModuleGA4 extends ModuleBase
         try
         {
             this.appInstance = appInstance;
-            this.gtag = Objects.requireNonNull(appInstance.getProperties().getPropertyStr("ga4MeasurementId"), "ga4MeasurementId not set");
-            this.googleUrlDomain = appInstance.getProperties().getPropertyStr("ga4GoogleUrlDomain", googleUrlDomain);
-            googleDebugEnabled = appInstance.getProperties().getPropertyBoolean("ga4DebugEnabled", googleDebugEnabled);
-            tagManagerPreviewString = appInstance.getProperties().getPropertyStr("ga4TagMangerPreviewString");
-            ipOverride = appInstance.getProperties().getPropertyStr("ga4DebugIpOverride", ipOverride);
-            provider = appInstance.getProperties().getPropertyStr("ga4VideoProvider", provider);
-            String vodPercentageStr = appInstance.getProperties().getPropertyStr("ga4VodPercentages", DEFAULT_VOD_PERCENTAGES);
+            this.gtag = Objects.requireNonNull(getGa4PropertyStr("ga4MeasurementId", gtag), "ga4MeasurementId not set");
+            this.googleUrlDomain = getGa4PropertyStr("ga4GoogleUrlDomain", googleUrlDomain);
+            googleDebugEnabled = getGa4PropertyBoolean("ga4DebugEnabled", googleDebugEnabled);
+            tagManagerPreviewString = getGa4PropertyStr("ga4TagMangerPreviewString", tagManagerPreviewString);
+            ipOverride = getGa4PropertyStr("ga4DebugIpOverride", ipOverride);
+            provider = getGa4PropertyStr("ga4VideoProvider", provider);
+            String vodPercentageStr = getGa4PropertyStr("ga4VodPercentages", DEFAULT_VOD_PERCENTAGES);
             vodPercentages = Arrays.stream(vodPercentageStr.split(","))
                     .map(String::trim)
                     .mapToInt(Integer::parseInt)
                     .sorted()
                     .toArray();
-            liveUpdateFrequency = appInstance.getProperties().getPropertyInt("ga4LiveUpdateFrequency", liveUpdateFrequency);
+            liveUpdateFrequency = getGa4PropertyInt("ga4LiveUpdateFrequency", liveUpdateFrequency);
             ga4 = new GA4(appInstance, gtag, googleUrlDomain, googleDebugEnabled, tagManagerPreviewString);
 
-            sendPublishEvents = appInstance.getProperties().getPropertyBoolean("ga4SendPublishEvents", sendPublishEvents);
+            sendPublishEvents = getGa4PropertyBoolean("ga4SendPublishEvents", sendPublishEvents);
             if (sendPublishEvents)
                 appInstance.addMediaCasterListener(new MediaCasterListener());
             sessionUpdateTimer = new Timer(CLASSNAME + "[" + appInstance.getContextStr() + "-session-update-timer]", true);
@@ -85,6 +85,24 @@ public class ModuleGA4 extends ModuleBase
         {
             getLogger(CLASS, appInstance).error(CLASSNAME + ".onAppStart [" + appInstance.getContextStr() + "] exception: " + e.getMessage(), e);
         }
+    }
+
+    private String getGa4PropertyStr(String propertyName, String defaultValue)
+    {
+        return appInstance.getProperties().getPropertyStr(propertyName,
+                Server.getInstance().getProperties().getPropertyStr(propertyName, defaultValue));
+    }
+
+    private int getGa4PropertyInt(String propertyName, int defaultValue)
+    {
+        return appInstance.getProperties().getPropertyInt(propertyName,
+                Server.getInstance().getProperties().getPropertyInt(propertyName, defaultValue));
+    }
+
+    private boolean getGa4PropertyBoolean(String propertyName, boolean defaultValue)
+    {
+        return appInstance.getProperties().getPropertyBoolean(propertyName,
+                Server.getInstance().getProperties().getPropertyBoolean(propertyName, defaultValue));
     }
 
     public void onAppStop(IApplicationInstance appInstance)
