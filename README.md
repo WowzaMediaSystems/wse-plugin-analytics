@@ -14,12 +14,12 @@ The module is also able to send tracking events via a _Server Side Tag Manager_ 
 
 ## Build instructions
 * Clone repo to local filesystem.
-* Update `wseLibDir` variable in `gradle.properties` to point to local _Wowza Streaming Engine_ `lib` folder.
-* Run `gradle generateJava` command to generate the `BuildProperties.java` file.  This task will automatically run before each compile to regenerate the file.
-* Run `gradle build` to build the jar file.
+* Update `wseLibDir` variable in the `gradle.properties` file to point to local _Wowza Streaming Engine_ `lib` folder.
+* Run `./gradlew generateJava` command to generate the `BuildProperties.java` file.  This task will automatically run before each compile to regenerate the file.
+* Run `./gradlew build` to build the jar file.
 
 ## More resources
-To use the compiled version of this module, see [Send connection and stream statistics to Google Analytics with a Wowza Streaming Engine Java module](https://www.wowza.com/docs/how-to-send-connection-and-stream-statistics-to-google-analytics-analytics).
+For full install instructions and to use the compiled version of this module, see [Send connection and stream statistics to Google Analytics with a Wowza Streaming Engine Java module](https://www.wowza.com/docs/how-to-send-connection-and-stream-statistics-to-google-analytics-analytics).
 
 [Wowza Streaming Engine Server-Side API Reference](https://www.wowza.com/resources/serverapi/)
 
