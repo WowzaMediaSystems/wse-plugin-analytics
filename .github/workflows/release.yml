@@ -23,6 +23,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'
+          distribution: 'corretto'
       # TODO (mod-squad): Add S3 fetching routine to pull in WSE dependencies.
       - name: Configure AWS credentials for hub account
         uses: aws-actions/configure-aws-credentials@v3
