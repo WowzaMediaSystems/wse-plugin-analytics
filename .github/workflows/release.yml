@@ -52,6 +52,7 @@ jobs:
             build
             -Pversion=${{ github.ref_name }}
             -PwseLibDir=${{ env.WSE_HOME }}/files/lib
+            -PprojectName=${{ env.PROJECT_NAME }}
       - uses: actions/upload-artifact@v3
         with:
           name: Package
