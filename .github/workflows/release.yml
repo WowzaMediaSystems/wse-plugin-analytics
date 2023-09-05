@@ -44,10 +44,10 @@ jobs:
           role-skip-session-tagging: true
       - name: Copy WSE distribution from S3
         run: |
-          aws s3 cp s3://${{ secrets.WOWZA_DISTRIBUTION_BUCKET }}/${{ env.WOWZA_RELEASE_CHANNEL }}/${{ env.WOWZA_VERSION }}/WowzaStreamingEngine-Update-${{ env.WOWZA_VERSION }}.zip .
+          aws s3 cp s3://${{ secrets.WOWZA_DISTRIBUTION_BUCKET }}/${{ vars.WOWZA_RELEASE_CHANNEL }}/${{ vars.WOWZA_VERSION }}/WowzaStreamingEngine-Update-${{ vars.WOWZA_VERSION }}.zip .
       - name: Unzip WSE distribution
         run: |
-          unzip WowzaStreamingEngine-Update-${{ env.WOWZA_VERSION }}.zip -d ${{ env.WSE_HOME }}
+          unzip WowzaStreamingEngine-Update-${{ vars.WOWZA_VERSION }}.zip -d ${{ vars.WSE_HOME }}
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
       - name: Build with Gradle
@@ -56,8 +56,8 @@ jobs:
           arguments: |
             build
             -Pversion=${{ github.ref_name }}
-            -PwseLibDir=${{ env.WSE_HOME }}/files/lib
-            -PprojectName=${{ env.PROJECT_NAME }}
+            -PwseLibDir=${{ vars.WSE_HOME }}/files/lib
+            -PprojectName=${{ vars.PROJECT_NAME }}
       - uses: actions/upload-artifact@v3
         with:
           name: Package
