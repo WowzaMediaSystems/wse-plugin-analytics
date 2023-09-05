@@ -24,11 +24,19 @@ jobs:
         with:
           java-version: '11'
       # TODO (mod-squad): Add S3 fetching routine to pull in WSE dependencies.
-      - name: Configure AWS credentials from Distrubiton Account
+      - name: Configure AWS credentials for hub account
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: ${{ secrets.DISTRIBUTION_ACCOUNT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.HUB_ACCOUNT_ROLE_ARN }}
+          role-session-name: ${{ secrets.HUB_ACCOUNT_ROLE_SESSION_NAME }}
+      - name: Configure AWS Credentials for spoke account
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.SPOKE_ACCOUNT_ROLE_ARN }}
+          role-session-name: ${{ secrets.SPOKE_ACCOUNT_ROLE_SESSION_NAME }}
+          role-chaining: true
       - name: Copy WSE distribution from S3
         run: |
           aws s3 cp s3://${{ secrets.WOWZA_DISTRIBUTION_BUCKET }}/${{ env.WOWZA_RELEASE_CHANNEL }}/${{ env.WOWZA_VERSION }}/WowzaStreamingEngine-Update-${{ env.WOWZA_VERSION }}.zip .
@@ -43,7 +51,7 @@ jobs:
           arguments: |
             build
             -Pversion=${{ github.ref_name }}
-            -PwseLibDir=${WSE_HOME}/files/lib
+            -PwseLibDir=${{ env.WSE_HOME }}/files/lib
       - uses: actions/upload-artifact@v3
         with:
           name: Package
