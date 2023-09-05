@@ -41,6 +41,7 @@ jobs:
           role-to-assume: ${{ secrets.SPOKE_ACCOUNT_ROLE_ARN }}
           role-session-name: ${{ secrets.SPOKE_ACCOUNT_ROLE_SESSION_NAME }}
           role-chaining: true
+          role-skip-session-tagging: true
       - name: Copy WSE distribution from S3
         run: |
           aws s3 cp s3://${{ secrets.WOWZA_DISTRIBUTION_BUCKET }}/${{ env.WOWZA_RELEASE_CHANNEL }}/${{ env.WOWZA_VERSION }}/WowzaStreamingEngine-Update-${{ env.WOWZA_VERSION }}.zip .
