@@ -68,4 +68,5 @@ jobs:
           discussion_category_name: announcements
           generate_release_notes: true
           files: |
+            build/libs/*
             build/distributions/*
