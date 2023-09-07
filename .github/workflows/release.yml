@@ -58,7 +58,6 @@ jobs:
             build
             -Pversion=${{ github.ref_name }}
             -PwseLibDir=${{ vars.WSE_HOME }}/files/lib
-            -PprojectName=${{ vars.PROJECT_NAME }}
       - uses: actions/upload-artifact@v3
         with:
           name: Package
@@ -69,4 +68,4 @@ jobs:
           discussion_category_name: announcements
           generate_release_notes: true
           files: |
-            build/libs/wse-plugin-analytics-${{ github.ref_name }}.jar
+            build/libs/*
