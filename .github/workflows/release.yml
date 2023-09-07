@@ -55,7 +55,7 @@ jobs:
         uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
         with:
           arguments: |
-            build
+            release
             -Pversion=${{ github.ref_name }}
             -PwseLibDir=${{ vars.WSE_HOME }}/files/lib
       - uses: actions/upload-artifact@v3
@@ -68,4 +68,4 @@ jobs:
           discussion_category_name: announcements
           generate_release_notes: true
           files: |
-            build/libs/*
+            build/distributions/*

@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'com.gorylenko.gradle-git-properties' version '2.4.1'
 }
 
 java {
@@ -16,29 +17,57 @@ repositories {
 }
 
 dependencies {
-    compileOnly name: 'wms-server'
-    compileOnly name: 'wms-webrtc'
+    compileOnly 'com.wowza.wms:wms-server:4.8.22'
+    compileOnly 'com.wowza.wms:wms-webrtc:4.8.22'
     compileOnly 'org.apache.logging.log4j:log4j-core:2.17.2'
     compileOnly 'org.apache.logging.log4j:log4j-api:2.17.2'
 }
 
-tasks.register("generateJava") {
+gitProperties {
+    extProperty = 'gitProps'
+    dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    dateFormatTimeZone = 'UTC'
+}
+
+generateGitProperties.outputs.upToDateWhen { false }
+
+tasks.register('generateBuildProperties') {
+    dependsOn generateGitProperties
     ext.outputDir = "$buildDir/generated/java"
     inputs.property('version', project.version)
     outputs.dir outputDir
     doLast {
         mkdir "$outputDir/com/wowza/wms/plugin/${projectName}"
-        file("$outputDir/com/wowza/wms/plugin/analytics/BuildProperties.java").text =
+        file("$outputDir/com/wowza/wms/plugin/${projectName}/BuildProperties.java").text =
                 """|package com.wowza.wms.plugin.${projectName};
                    |public class BuildProperties {
                    |    public static String getVersion() { return "${project.version}"; }
+                   |    public static String getBuildDate() { return "${-> project.ext.gitProps['git.commit.time']}"; }
+                   |    public static String getBuildRevision() { return "${-> project.ext.gitProps['git.commit.id.abbrev']}"; }
                    |}""".stripMargin()
     }
 }
 
-compileJava.dependsOn generateJava
-sourceSets.main.java.srcDir generateJava.outputDir
+compileJava.dependsOn generateBuildProperties
+sourceSets.main.java.srcDir generateBuildProperties.outputDir
 
-tasks.withType(Jar).configureEach {
-    archiveBaseName = "wse-plugin-${projectName}"
+jar.configure {
+    manifest {
+        attributes(
+                'Gradle-Version'        : "Gradle ${gradle.gradleVersion}",
+                'Created-By'      		: "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+                'Name'                  : "${project.name}",
+                'Build-Version'	        : "${project.version}",
+                'Build-Timestamp'    	: "${-> project.ext.gitProps['git.commit.time']}",
+                'Build-Revision'        : "${-> project.ext.gitProps['git.commit.id.abbrev']}",
+        )
+    }
+    exclude('git.properties')
+}
+
+tasks.register('release', Zip) {
+    from files('LICENSE.txt', 'README.md')
+    from (jar) {
+        into 'lib'
+    }
 }
