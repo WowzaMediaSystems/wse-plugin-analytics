@@ -66,7 +66,7 @@ jar.configure {
 }
 
 tasks.register('release', Zip) {
-    archiveFileName = "${project.name}-${project.version}-bundle.zip"
+    archiveFileName = "${project.name}-bundle.zip"
     from files('LICENSE.txt', 'README.md')
     from (jar) {
         into 'lib'
