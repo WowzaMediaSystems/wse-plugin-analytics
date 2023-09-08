@@ -63,12 +63,7 @@ jar.configure {
         )
     }
     exclude('git.properties')
-}
-
-tasks.register('release', Zip) {
-    archiveFileName = "${project.name}-bundle.zip"
-    from files('LICENSE.txt', 'README.md')
-    from (jar) {
-        into 'lib'
+    metaInf {
+        from files('LICENSE.txt')
     }
 }
