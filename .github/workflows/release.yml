@@ -58,10 +58,6 @@ jobs:
             build
             -Pversion=${{ github.ref_name }}
             -PwseLibDir=${{ vars.WSE_HOME }}/files/lib
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Package
-          path: build/libs
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
