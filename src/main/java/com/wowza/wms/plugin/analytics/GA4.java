@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class GA4
 {
-    private static final Class CLASS = GA4.class;
+    private static final Class<GA4> CLASS = GA4.class;
     private static final String CLASSNAME = CLASS.getSimpleName();
     private final IApplicationInstance appInstance;
     private final WMSLogger logger;
@@ -81,10 +81,13 @@ public class GA4
 
         client.sendAsync(builder.build(), HttpResponse.BodyHandlers.discarding())
                 .whenCompleteAsync((response, exception) -> {
-                    if (exception != null)
-                        logger.error(CLASSNAME + ".sendEvent [" + appInstance.getContextStr() + "] request: " + uri, exception);
-                    else if (debugEnabled)
-                        logger.info(CLASSNAME + ".sendEvent [" + appInstance.getContextStr() + "] request: " + uri + ", response: " + response.statusCode());
-                 });
+                    if (debugEnabled)
+                    {
+                        if (exception != null)
+                            logger.error(CLASSNAME + ".sendEvent [" + appInstance.getContextStr() + "] request: " + uri, exception);
+                        else
+                            logger.info(CLASSNAME + ".sendEvent [" + appInstance.getContextStr() + "] request: " + uri + ", response: " + response.statusCode());
+                    }
+                });
     }
 }
